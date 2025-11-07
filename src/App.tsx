@@ -7,7 +7,7 @@ const DEFAULT_STAGES: Stage[] = [
   { id: 4, name: 'Waking Up', duration: 20, enabled: true },
   { id: 3, name: 'Working Out', duration: 60, enabled: true },
   { id: 2, name: 'Getting Ready', duration: 55, enabled: true },
-  { id: 1, name: 'Walking to Station', duration: 20, enabled: true },
+  { id: 1, name: 'Getting to the Station', duration: 20, enabled: true },
 ]
 
 function App() {
