@@ -10,8 +10,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
-        name: 'Get Ready Timer',
-        short_name: 'Timer',
+        name: 'Wake up When',
+        short_name: 'Wake up',
         description: 'A Progressive Web App built with React and Tailwind CSS',
         theme_color: '#ffffff',
         background_color: '#ffffff',

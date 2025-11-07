@@ -3,13 +3,15 @@ import { useState, useEffect } from 'react'
 function App() {
   const [trainTime, setTrainTime] = useState('08:50')
   const [stages, setStages] = useState([
-    { id: 1, name: 'Walking to Station', duration: 20, enabled: true },
-    { id: 2, name: 'Getting Ready', duration: 55, enabled: true },
+    { id: 4, name: 'Waking Up', duration: 20, enabled: true },
     { id: 3, name: 'Working Out', duration: 60, enabled: true },
-    { id: 4, name: 'Waking up', duration: 20, enabled: true },
+    { id: 2, name: 'Getting Ready', duration: 55, enabled: true },
+    { id: 1, name: 'Walking to Station', duration: 20, enabled: true },
   ])
   const [newStageName, setNewStageName] = useState('')
   const [wakeUpTime, setWakeUpTime] = useState('')
+  const [draggedIndex, setDraggedIndex] = useState(null)
+  const [dragOverIndex, setDragOverIndex] = useState(null)
 
   // Calculate wake-up time whenever train time or stages change
   useEffect(() => {
@@ -81,22 +83,44 @@ function App() {
     ))
   }
 
-  const moveStageUp = (index) => {
-    if (index === 0) return
-    const newStages = [...stages]
-    const temp = newStages[index]
-    newStages[index] = newStages[index - 1]
-    newStages[index - 1] = temp
-    setStages(newStages)
+  const handleDragStart = (index) => {
+    setDraggedIndex(index)
   }
 
-  const moveStageDown = (index) => {
-    if (index === stages.length - 1) return
+  const handleDragOver = (e, index) => {
+    e.preventDefault()
+    setDragOverIndex(index)
+  }
+
+  const handleDragLeave = () => {
+    setDragOverIndex(null)
+  }
+
+  const handleDrop = (e, dropIndex) => {
+    e.preventDefault()
+
+    if (draggedIndex === null || draggedIndex === dropIndex) {
+      setDraggedIndex(null)
+      setDragOverIndex(null)
+      return
+    }
+
     const newStages = [...stages]
-    const temp = newStages[index]
-    newStages[index] = newStages[index + 1]
-    newStages[index + 1] = temp
+    const draggedStage = newStages[draggedIndex]
+
+    // Remove from old position
+    newStages.splice(draggedIndex, 1)
+    // Insert at new position
+    newStages.splice(dropIndex, 0, draggedStage)
+
     setStages(newStages)
+    setDraggedIndex(null)
+    setDragOverIndex(null)
+  }
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null)
+    setDragOverIndex(null)
   }
 
   const totalEnabledMinutes = stages
@@ -108,7 +132,7 @@ function App() {
       {/* Header */}
       <header className="">
         <div className="max-w-3xl text-center mx-auto px-4 py-6 sm:px-6">
-          <h1 className="text-3xl font-semibold text-gray-900">Get Ready Timer</h1>
+          <h1 className="text-3xl font-semibold text-gray-900">Wake up When</h1>
           <p className="text-sm text-gray-500 mt-1">Calculate your wake-up time</p>
         </div>
       </header>
@@ -149,12 +173,34 @@ function App() {
             {stages.map((stage, index) => (
               <div
                 key={stage.id}
-                className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
+                draggable
+                onDragStart={() => handleDragStart(index)}
+                onDragOver={(e) => handleDragOver(e, index)}
+                onDragLeave={handleDragLeave}
+                onDrop={(e) => handleDrop(e, index)}
+                onDragEnd={handleDragEnd}
+                className={`flex items-center gap-3 p-3 rounded-xl transition-all cursor-move ${
                   stage.enabled
                     ? 'bg-gray-50'
                     : 'bg-white opacity-50'
+                } ${
+                  draggedIndex === index ? 'opacity-50 scale-95' : ''
+                } ${
+                  dragOverIndex === index && draggedIndex !== index ? 'ring-2 ring-gray-900' : ''
                 }`}
               >
+                {/* Drag Handle */}
+                <div className="text-gray-400 cursor-move" title="Drag to reorder">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+                    <circle cx="4" cy="4" r="1.5"/>
+                    <circle cx="4" cy="8" r="1.5"/>
+                    <circle cx="4" cy="12" r="1.5"/>
+                    <circle cx="8" cy="4" r="1.5"/>
+                    <circle cx="8" cy="8" r="1.5"/>
+                    <circle cx="8" cy="12" r="1.5"/>
+                  </svg>
+                </div>
+
                 {/* Enable/Disable Toggle */}
                 <input
                   type="checkbox"
@@ -177,7 +223,7 @@ function App() {
                   {/* Preset Time Buttons */}
                   {stage.enabled && (
                     <div className="flex gap-1">
-                      {[30, 60, 90].map((minutes) => (
+                      {[20, 40, 60].map((minutes) => (
                         <button
                           key={minutes}
                           onClick={() => updateStageDuration(stage.id, minutes)}
@@ -201,30 +247,6 @@ function App() {
                     />
                     <span className="text-xs text-gray-500">min</span>
                   </div>
-                </div>
-
-                {/* Reorder Buttons */}
-                <div className="flex flex-col gap-0.5">
-                  <button
-                    onClick={() => moveStageUp(index)}
-                    disabled={index === 0}
-                    className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                    title="Move up"
-                  >
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={() => moveStageDown(index)}
-                    disabled={index === stages.length - 1}
-                    className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                    title="Move down"
-                  >
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
                 </div>
 
                 {/* Remove Button */}

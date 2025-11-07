@@ -6,7 +6,7 @@ import App from './App'
 describe('App', () => {
   it('renders the app title', () => {
     render(<App />)
-    expect(screen.getByText('Get Ready Timer')).toBeInTheDocument()
+    expect(screen.getByText('Wake up When')).toBeInTheDocument()
   })
 
   it('displays the default train time', () => {

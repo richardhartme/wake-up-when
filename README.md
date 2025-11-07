@@ -1,4 +1,4 @@
-# Get Ready Timer
+# Wake up When
 
 A Progressive Web App that calculates what time you need to wake up based on your train departure time and morning routine stages.
 
@@ -83,7 +83,7 @@ Default train time: 8:50 AM
 ## Project Structure
 
 ```
-get-ready-timer/
+wake-up-when/
 ├── src/
 │   ├── App.jsx                      # Main application component
 │   ├── App.test.jsx                 # Component tests
