@@ -120,7 +120,7 @@ function App() {
         </aside>
 
         {/* Right Column - Main Content */}
-        <main className="flex-1 px-4 py-12 sm:px-6 md:px-8 max-w-4xl">
+        <main className="flex-1 px-4 py-4 sm:px-6 sm:py-12 md:px-8 max-w-4xl">
         {/* Wake-up Time Display */}
         <div className="bg-white rounded-2xl border border-gray-200 p-12 mb-6">
           <div className="text-center">
@@ -191,45 +191,27 @@ function App() {
                   className="w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-900 cursor-pointer"
                 />
 
+                {/* Duration Input */}
+                <div className="flex items-center gap-1">
+                  <input
+                    type="number"
+                    value={stage.duration}
+                    onChange={(e) => { updateStageDuration(stage.id, e.target.value); }}
+                    className="w-12 text-sm text-center bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:border-gray-900 transition-colors rounded-none px-1 py-0.5"
+                    min="0"
+                    disabled={!stage.enabled}
+                  />
+                  <span className="text-sm text-gray-600">min</span>
+                </div>
+
                 {/* Stage Name */}
                 <input
                   type="text"
                   value={stage.name}
                   onChange={(e) => { updateStageName(stage.id, e.target.value); }}
-                  className="flex-1 px-3 py-2 text-sm bg-transparent border-0 focus:outline-none focus:ring-0 placeholder-gray-400"
+                  className="flex-1 px-1 py-2 text-sm bg-transparent border-0 focus:outline-none focus:ring-0 placeholder-gray-400"
                   disabled={!stage.enabled}
                 />
-
-                {/* Duration Input and Preset Buttons */}
-                <div className="flex items-center gap-1">
-                  {/* Preset Time Buttons */}
-                  {stage.enabled && (
-                    <div className="flex gap-1">
-                      {[20, 40, 60].map((minutes) => (
-                        <button
-                          key={minutes}
-                          onClick={() => { updateStageDuration(stage.id, minutes); }}
-                          className="px-2 py-1 text-xs text-gray-600 bg-white border border-gray-200 rounded hover:bg-gray-100 hover:border-gray-300 transition-colors"
-                          title={`Set to ${String(minutes)} minutes`}
-                        >
-                          {minutes}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-gray-200">
-                    <input
-                      type="number"
-                      value={stage.duration}
-                      onChange={(e) => { updateStageDuration(stage.id, e.target.value); }}
-                      className="w-12 text-sm text-center bg-transparent border-0 focus:outline-none focus:ring-0"
-                      min="0"
-                      disabled={!stage.enabled}
-                    />
-                    <span className="text-xs text-gray-500">min</span>
-                  </div>
-                </div>
 
                 {/* Remove Button */}
                 <button
