@@ -44,6 +44,7 @@ dev-dist
 !.vscode/extensions.json
 .idea
 .DS_Store
+*.iml
 *.suo
 *.ntvs*
 *.njsproj
