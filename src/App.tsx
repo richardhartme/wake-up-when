@@ -76,7 +76,7 @@ function App() {
         <main>
 
           <div className="text-center mb-4">
-            <img src="/logo.png" alt="Wake up When" className="mx-auto mt-4 mb-4 h-24" />
+            <img src="/logo.png" alt="Wake up When" className="mx-auto my-6 h-36" />
             <p className="text-sm text-gray-500">Calculate what time you need to wake up to make your train</p>
           </div>
 
