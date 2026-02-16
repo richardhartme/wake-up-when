@@ -71,6 +71,12 @@ function App() {
     ))
   }
 
+  const resetState = () => {
+    setTrainTime('08:50')
+    setStages(DEFAULT_STAGES)
+    setNewStageName('')
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center">
         <main>
@@ -187,6 +193,10 @@ function App() {
             </div>
           </CardContent>
         </Card>
+
+        <div className="mb-4 flex justify-center">
+          <Button onClick={resetState}>Reset</Button>
+        </div>
 
         {/* Footer */}
         <footer className="py-4 text-center">

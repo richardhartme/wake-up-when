@@ -76,4 +76,26 @@ describe('App', () => {
     // Total should now be 135 (155 - 20)
     expect(screen.getByText('135 minutes total')).toBeInTheDocument()
   })
+
+  it('resets train time and stages to defaults', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    const timeInput = screen.getByDisplayValue('08:50')
+    await user.clear(timeInput)
+    await user.type(timeInput, '09:10')
+
+    const input = screen.getByPlaceholderText('Add a new stage...')
+    const addButton = screen.getByRole('button', { name: 'Add' })
+    await user.type(input, 'New Stage')
+    await user.click(addButton)
+    expect(screen.getByDisplayValue('New Stage')).toBeInTheDocument()
+
+    const resetButton = screen.getByRole('button', { name: 'Reset' })
+    await user.click(resetButton)
+
+    expect(screen.getByDisplayValue('08:50')).toBeInTheDocument()
+    expect(screen.queryByDisplayValue('New Stage')).not.toBeInTheDocument()
+    expect(screen.getByDisplayValue('Getting to the Station')).toBeInTheDocument()
+  })
 })
