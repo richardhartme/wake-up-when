@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import type { Stage } from './utils/timeCalculations'
-import { calculateWakeUpTime, calculateTotalMinutes } from './utils/timeCalculations'
+import { calculateWakeUpTime, calculateTotalMinutes, calculateStageTimes } from './utils/timeCalculations'
 import { useLocalStorage } from './hooks/useLocalStorage'
 
 import { Button } from "@/components/ui/button"
@@ -33,6 +33,9 @@ function App() {
 
   // Calculate total minutes as derived state
   const totalEnabledMinutes = useMemo(() => calculateTotalMinutes(stages), [stages])
+
+  // Calculate per-stage start/end times
+  const stageTimes = useMemo(() => calculateStageTimes(trainTime, stages), [trainTime, stages])
 
   const addStage = () => {
     if (!newStageName.trim()) return
@@ -122,22 +125,25 @@ function App() {
             <CardTitle>Morning Stages</CardTitle>
           </CardHeader>
           <CardContent>
-            {stages.map((stage) => (
+            {stages.map((stage, index) => {
+              const stageTime = stageTimes[index]
+              return (
               <div
                 key={stage.id}
-                className={`flex items-center gap-3 p-2 mb-2 rounded-xl transition-all ${
+                className={`p-2 mb-2 rounded-xl transition-all ${
                   stage.enabled
                     ? 'bg-gray-50'
                     : 'bg-white opacity-50'
                 }`}
               >
-                {/* Enable/Disable Toggle */}
-                <Checkbox
-                  defaultChecked={stage.enabled}
-                  onCheckedChange={() => { toggleStage(stage.id); }}
-                />
+                <div className="flex items-center gap-3">
+                  {/* Enable/Disable Toggle */}
+                  <Checkbox
+                    defaultChecked={stage.enabled}
+                    onCheckedChange={() => { toggleStage(stage.id); }}
+                  />
 
-                {/* Duration Input */}
+                  {/* Duration Input */}
                   <input
                     type="number"
                     value={stage.duration}
@@ -148,27 +154,34 @@ function App() {
                   />
                   <span className="text-sm text-gray-600">min</span>
 
-                {/* Stage Name */}
-                <input
-                  type="text"
-                  value={stage.name}
-                  onChange={(e) => { updateStageName(stage.id, e.target.value); }}
-                  className="px-1 py-2 text-sm bg-transparent border-0 focus:outline-none focus:ring-0 placeholder-gray-400"
-                  disabled={!stage.enabled}
-                />
+                  {/* Stage Name */}
+                  <input
+                    type="text"
+                    value={stage.name}
+                    onChange={(e) => { updateStageName(stage.id, e.target.value); }}
+                    className="px-1 py-2 text-sm bg-transparent border-0 focus:outline-none focus:ring-0 placeholder-gray-400"
+                    disabled={!stage.enabled}
+                  />
 
-                {/* Remove Button */}
-                <button
-                  onClick={() => { removeStage(stage.id); }}
-                  className="p-2 shrink-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                  title="Remove stage"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
+                  {/* Remove Button */}
+                  <button
+                    onClick={() => { removeStage(stage.id); }}
+                    className="p-2 shrink-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                    title="Remove stage"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                {stageTime && (
+                  <p className="text-xs text-gray-400 mt-1 ml-7">
+                    {stageTime.start} – {stageTime.end}
+                  </p>
+                )}
               </div>
-            ))}
+              )
+            })}
 
             {/* Add New Stage */}
             <div className="mt-4 pt-4 border-t border-gray-100">
